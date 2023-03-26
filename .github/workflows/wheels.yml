@@ -41,7 +41,8 @@ jobs:
         # to supply options, put them in 'env', like:
         # env:
         #   CIBW_SOME_OPTION: value
-
+        env:
+          CIBW_SKIP: pp*
 
       - uses: actions/upload-artifact@v2
         with:
@@ -54,7 +55,6 @@ jobs:
       matrix:
         arch: [aarch64]
     steps:
-
     - uses: actions/checkout@v3
       with:
         submodules: true
@@ -66,6 +66,7 @@ jobs:
     - uses: pypa/cibuildwheel@v2.12.1
       env:
         CIBW_ARCHS: ${{ matrix.arch }}
+        CIBW_SKIP: pp*
 
     - name: Verify clean directory
       run: git diff --exit-code
