@@ -63,8 +63,11 @@ jobs:
           pypy3.10
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.16
+      uses: pypa/cibuildwheel@v2.20
       env:
+        CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+        CIBW_MANYLINUX_I686_IMAGE: manylinux2014
+        CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
         # Skip trying to test arm64 builds on Intel Macs
         CIBW_TEST_SKIP: "*-macosx_arm64 *-macosx_universal2:arm64"
 
@@ -90,9 +93,10 @@ jobs:
         platforms: all
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.16
+      uses: pypa/cibuildwheel@v2.20
       env:
         CIBW_ARCHS: ${{ matrix.arch }}
+        CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
 
     - name: Verify clean directory
       run: git diff --exit-code

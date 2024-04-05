@@ -101,7 +101,7 @@ test-command = "pytest -v -m ci {package}/tests"
 build = ["cp3{9,10,11,12}-manylinux*", "pp3{9,10}-manylinux*"]
 archs = ["auto64"]
 before-all = [
-    "dnf -y install alsa-lib-devel alsa-utils",
+    "yum -y install alsa-lib-devel alsa-utils",
     "curl -o jack2-1.9.22.tar.gz https://codeload.github.com/jackaudio/jack2/tar.gz/refs/tags/v1.9.22",
     "tar -xzf jack2-1.9.22.tar.gz",
     "cd jack2-1.9.22",
