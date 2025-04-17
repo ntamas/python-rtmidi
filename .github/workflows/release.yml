@@ -37,12 +37,9 @@ jobs:
         name: sdist
         path: dist/*.tar.gz
 
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+  build_win_wheels:
+    name: Build wheels on windows-latest
+    runs-on: windows-latest
     steps:
 
     - uses: actions/checkout@v3
@@ -50,7 +47,35 @@ jobs:
         submodules: true
 
     - uses: ilammy/msvc-dev-cmd@v1
-      if: matrix.os == 'windows-latest'
+
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: |
+          3.9
+          3.10
+          3.11
+          3.12
+          pypy3.9
+          pypy3.10
+
+    - name: Build wheels
+      uses: pypa/cibuildwheel@v2.20
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheels_win
+        path: wheelhouse/*.whl
+
+  build_macos_wheels:
+    name: Build wheels on macos-latest
+    runs-on: macos-latest
+    steps:
+
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
 
     - name: Install Python
       uses: actions/setup-python@v5
@@ -66,19 +91,74 @@ jobs:
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.20
       env:
-        CIBW_MANYLINUX_X86_64_IMAGE: manylinux2010
-        CIBW_MANYLINUX_I686_IMAGE: manylinux2010
-        CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
         # Skip trying to test arm64 builds on Intel Macs
         CIBW_TEST_SKIP: "*-macosx_arm64 *-macosx_universal2:arm64"
 
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
-        name: wheels
+        name: wheels_macos
         path: wheelhouse/*.whl
 
-  build_arch_wheels:
+  build_linux_wheels:
+    name: Build wheels on ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: |
+          3.11
+          3.12
+          pypy3.9
+          pypy3.10
+
+    - name: Build wheels
+      uses: pypa/cibuildwheel@v2.20
+      env:
+        CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+        CIBW_MANYLINUX_I686_IMAGE: manylinux2014
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheels_linux
+        path: wheelhouse/*.whl
+
+  build_linux_legacy_wheels:
+    name: Build wheels on ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: |
+          3.9
+          3.10
+
+    - name: Build wheels
+      uses: pypa/cibuildwheel@v2.20
+      env:
+        CIBW_MANYLINUX_X86_64_IMAGE: manylinux2010
+        CIBW_MANYLINUX_I686_IMAGE: manylinux2010
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheels_linux_legacy
+        path: wheelhouse/*.whl
+
+  build_linux_aarch64_wheels:
     name: Build wheels on Linux ${{ matrix.arch }}
     runs-on: ubuntu-22.04
     strategy:
@@ -107,11 +187,11 @@ jobs:
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
-        name: arch_wheels
+        name: wheels_linux_aarch64
         path: wheelhouse/*.whl
 
   upload_pypi:
-    needs: [build_arch_wheels, build_wheels, build_sdist]
+    needs: [build_linux_wheels, build_linux_aarch64_wheels, build_linux_legacy_wheels, build_win_wheels, build_macos_wheels, build_sdist]
     runs-on: ubuntu-latest
     environment: PyPI release
     steps:
