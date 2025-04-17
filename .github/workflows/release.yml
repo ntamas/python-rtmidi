@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -38,29 +38,18 @@ jobs:
         path: dist/*.tar.gz
 
   build_win_wheels:
-    name: Build wheels on windows-latest
+    name: Build wheels on Windows
     runs-on: windows-latest
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
     - uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Install Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: |
-          3.9
-          3.10
-          3.11
-          3.12
-          pypy3.9
-          pypy3.10
-
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.20
+      uses: pypa/cibuildwheel@v2.23
 
     - name: Upload wheels
       uses: actions/upload-artifact@v4
@@ -69,27 +58,16 @@ jobs:
         path: wheelhouse/*.whl
 
   build_macos_wheels:
-    name: Build wheels on macos-latest
+    name: Build wheels on macOS
     runs-on: macos-latest
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: |
-          3.9
-          3.10
-          3.11
-          3.12
-          pypy3.9
-          pypy3.10
-
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.20
+      uses: pypa/cibuildwheel@v2.23
       env:
         # Skip trying to test arm64 builds on Intel Macs
         CIBW_TEST_SKIP: "*-macosx_arm64 *-macosx_universal2:arm64"
@@ -101,26 +79,18 @@ jobs:
         path: wheelhouse/*.whl
 
   build_linux_wheels:
-    name: Build wheels on ubuntu-latest
+    name: Build wheels on Linux
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: |
-          3.11
-          3.12
-          pypy3.9
-          pypy3.10
-
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.20
+      uses: pypa/cibuildwheel@v2.23
       env:
+        CIBW_BUILD: 'cp311-* cp312-* cp313-* pp39-* pp310-* pp311-*'
         CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
         CIBW_MANYLINUX_I686_IMAGE: manylinux2014
 
@@ -131,24 +101,18 @@ jobs:
         path: wheelhouse/*.whl
 
   build_linux_legacy_wheels:
-    name: Build wheels on ubuntu-latest
+    name: Build legacy wheels on Linux
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: |
-          3.9
-          3.10
-
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.20
+      uses: pypa/cibuildwheel@v2.23
       env:
+        CIBW_BUILD: 'cp39-* cp310-*'
         CIBW_MANYLINUX_X86_64_IMAGE: manylinux2010
         CIBW_MANYLINUX_I686_IMAGE: manylinux2010
 
@@ -159,14 +123,11 @@ jobs:
         path: wheelhouse/*.whl
 
   build_linux_aarch64_wheels:
-    name: Build wheels on Linux ${{ matrix.arch }}
+    name: Build wheels on Linux aarch64
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        arch: [aarch64]
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -175,9 +136,9 @@ jobs:
         platforms: all
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.20
+      uses: pypa/cibuildwheel@v2.23
       env:
-        CIBW_ARCHS: ${{ matrix.arch }}
+        CIBW_ARCHS: aarch64
         CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
 
     - name: Verify clean directory
