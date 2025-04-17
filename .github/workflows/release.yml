@@ -32,8 +32,9 @@ jobs:
       run: pipx run twine check --strict dist/*
 
     - name: Upload sdist
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
+        name: sdist
         path: dist/*.tar.gz
 
   build_wheels:
@@ -72,13 +73,14 @@ jobs:
         CIBW_TEST_SKIP: "*-macosx_arm64 *-macosx_universal2:arm64"
 
     - name: Upload wheels
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
+        name: wheels
         path: wheelhouse/*.whl
 
   build_arch_wheels:
     name: Build wheels on Linux ${{ matrix.arch }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         arch: [aarch64]
@@ -103,8 +105,9 @@ jobs:
       shell: bash
 
     - name: Upload wheels
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
+        name: arch_wheels
         path: wheelhouse/*.whl
 
   upload_pypi:
@@ -112,11 +115,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: PyPI release
     steps:
+    - uses: actions/upload-artifact/merge@v4
+
     - uses: actions/download-artifact@v3
       with:
-        # unpacks default artifact into dist/
-        # if `name: artifact` is omitted, the action will create extra parent dir
-        name: artifact
+        name: merged-artifacts
         path: dist
 
     - name: Publish distribution to PyPI
