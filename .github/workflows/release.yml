@@ -90,7 +90,7 @@ jobs:
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.23
       env:
-        CIBW_BUILD: 'cp311-* cp312-* cp313-* pp39-* pp310-*'
+        CIBW_BUILD: 'cp311-manylinux-* cp312-manylinux-* cp313-manylinux-* pp39-manylinux-* pp310-manylinux-*'
         CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
         CIBW_MANYLINUX_I686_IMAGE: manylinux2014
 
@@ -112,9 +112,10 @@ jobs:
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.20
       env:
-        CIBW_BUILD: 'cp39-* cp310-*'
+        CIBW_BUILD: 'cp39-manylinux-* cp310-manylinux-*'
         CIBW_MANYLINUX_X86_64_IMAGE: manylinux2010
         CIBW_MANYLINUX_I686_IMAGE: manylinux2010
+        CIBW_REPAIR_WHEEL_COMMAND: 'auditwheel repair -w {dest_dir} {wheel}'
 
     - name: Upload wheels
       uses: actions/upload-artifact@v4

@@ -98,7 +98,7 @@ test-command = "pytest -v -m ci {package}/tests"
 
 # Install system library
 [tool.cibuildwheel.linux]
-build = ["cp3{9,10,11,12}-manylinux*", "pp3{9,10}-manylinux*"]
+build = ["cp3{9,10,11,12,13}-manylinux*", "pp3{9,10}-manylinux*"]
 archs = ["auto64"]
 before-all = [
     "yum -y install alsa-lib-devel alsa-utils",
@@ -112,9 +112,9 @@ before-all = [
 repair-wheel-command = "auditwheel repair --exclude libasound.so.2 --lib-sdir . -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
-build = "cp3{9,10,11,12}-macosx*"
+build = "cp3{9,10,11,12,13}-macosx*"
 archs = ["x86_64", "arm64"]
 
 [tool.cibuildwheel.windows]
-build = "cp3{9,10,11,12}-win*"
+build = "cp3{9,10,11,12,13}-win*"
 archs = ["AMD64"]
