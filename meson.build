@@ -1,7 +1,7 @@
 project(
     'python-rtmidi',
     'cpp',
-    version: '1.5.8',
+    version: '1.6.0',
     license: 'MIT',
     default_options: [
         'warning_level=2',
@@ -55,7 +55,7 @@ elif host_machine.system().to_lower() == 'darwin'
     # API
     coremidi_dep = dependency(
         'appleframeworks',
-        modules: ['coreaudio', 'coremidi', 'foundation'],
+        modules: ['CoreAudio', 'CoreMIDI', 'Foundation'],
         required: jack_not_found
     )
     alsa_dep = disabler()
